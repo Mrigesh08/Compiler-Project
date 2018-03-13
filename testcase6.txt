@@ -1,0 +1,16 @@
+_main[]
+	function [string a, string g] = _lolfun[string a, string g]
+    a = a;
+    g = @m;
+    function [int a, int g] = _lolfun[string a, string g]
+      a = a;
+      g = @m;
+      function [string a, string g] = _lolfun[string a, string g]
+        a = a;
+        g = @m;
+      end;
+    end;
+  end;
+
+  [a,b]=_lolfun(a,b);
+end

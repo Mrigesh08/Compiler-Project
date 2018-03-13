@@ -1,0 +1,22 @@
+_main[]
+	int a,b;
+	a=10.52;
+	b="there";
+	c=a*b+d;
+	if((((c==d).and.(a>=b)).or.(.not.(a>b))).and.(a=/=b))
+		int a;
+	else
+    if (6<7)
+		  int a;
+    endif;
+	endif;
+
+  matrix m1;
+  m1=[1,2,3;4,5,6];
+  x=@m1;
+
+  a=m1[1,2];
+
+  print(x);
+  read(y);
+end

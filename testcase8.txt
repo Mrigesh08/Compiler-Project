@@ -1,0 +1,13 @@
+_main[]
+	
+	# lexer error
+	string a;
+	a="fdafdafdafdafdafdsafdafdsafdafdafdasfdasfdsafdasfdsa";
+
+	# syntax error
+	string a
+
+	
+	
+
+end
