@@ -207,8 +207,6 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 			tn3->next=tn2->down;
 			tn2->down=tn3;
 			tn->down->next=tn2;
-			printf("///////////////////////////////////////////\n");
-			printList(tn->down);
 			return tn;
 			break;
 
@@ -271,7 +269,6 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 				return tn;
 			}
 			else if(k==15 || k==16){
-				printf("888888888888888888888888888888888888888888888888888888888888888\n");
 				tn->down=list;
 				return tn;
 			}
@@ -281,6 +278,9 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 			break;
 		
 		case 19: 
+			if(list->next==NULL){
+				return list;
+			}
 			tn=createNewTreeNode("AEXP",NULL);
 			tn->down = list;
 			return tn;
