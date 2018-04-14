@@ -25,7 +25,15 @@ Stack * createStack(){
 SNode * newStackNode(char * str){
 	SNode * n=(SNode *)malloc(sizeof(SNode));
 	n->next=NULL;
-	n->str=str;
+	if(str==NULL){
+		n->str=str;
+	}
+	else{
+		char * c=(char *)malloc(sizeof(str)+1);
+		strcpy(c,str);
+		n->str=c;	
+	}
+	
 	return n;
 }
 
@@ -50,7 +58,7 @@ char * top(Stack * s){
 
 
 SNode * r1(){
-
+	printf("R1 USED\n");
 	char str1[]="ASSIGNOP";
 	char str2[]="FUNID";
 	char str3[]="SQO";
@@ -83,7 +91,7 @@ SNode * r1(){
 }
 
 SNode * r2(){
-	
+	printf("R2 USED\n");
 	char str1[]="OP";
 	char str2[]="<27>";
 	char str3[]="CL";
@@ -112,6 +120,7 @@ SNode * r2(){
 }
 
 SNode * r3(){
+	printf("R3 USED\n");
 	char str1[]="<14>";
 	char str2[]="SEMICOLON";
 

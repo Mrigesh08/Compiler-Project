@@ -2,6 +2,7 @@
 // Name=Mrigesh Madaan
 
 #include <stdlib.h>
+#include <string.h>
 #include "lexer.h"
 
 
@@ -16,7 +17,8 @@ typedef struct _tn{
 
 TreeNode * createNewTreeNode(char * str,Token * tk){
 	TreeNode * n=(TreeNode *)malloc(sizeof(TreeNode));
-	n->str=str;
+	n->str=( char *)malloc(sizeof(str)+1);
+	strcpy(n->str,str);
 	n->token=tk;
 	n->next=NULL;
 	n->down=NULL;

@@ -4,7 +4,8 @@
 #include <setjmp.h>
 #include "grammarRead.h"
 #include "stack.h"
-#include "ntree.h" // this file includes lexer.h
+#include "ast.h" // this file includes lexer.h, ntree.h
+
 
 Stack * stack;
 Head * g;
@@ -136,8 +137,9 @@ TreeNode * insertIntoTreeAndReversePush(char * str, TreeNode * tn){
 	
 	TreeNode * tn2=createNewTreeNode(n8->str,NULL);
 	// printf("pushed into tree %s\n",tn2->str );
-	
-	// printf("created\n");
+
+
+	// printf("created\n"); 
 	tn->down=tn2;
 	// printf("step2\n");
 	tn2->parent=tn;
@@ -490,6 +492,7 @@ int main(int argc, char const *argv[])
 		printf("Please enter filename command line arguments.\n");
 		return 0;
 	}
+
 	constructAndPopulateTrie();
 	display();
 	display2();
@@ -604,10 +607,18 @@ int main(int argc, char const *argv[])
 			printParseTree(parseTree);
 			// fclose(f);
 			return 0;
-		}	
+		}
+		else if(k==5){
+			printf("CREATING AST\n");
+			TreeNode * ast=createAst(parseTree);
+			printf("PRINTING AST........................\n");
+			printSimpleParseTree(ast);
+			printf("CREATING AST COMPLETED\n");
+		}
 		else{
 			printf("%d is not a valid option. Please Choose a valid option.\n", k);
 		}
+
 		display2();
 		scanf("%d",&k);
 	}
