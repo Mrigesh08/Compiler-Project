@@ -1,0 +1,16 @@
+_main[]
+
+	if(((c==d).and.(a>=b)).or.(.not.(a>b)))
+		int a;
+	else
+	    if (6<7)
+			  int a;
+	    endif;
+
+	    a=5;
+	endif;
+
+	# the following is allowed according to grammar. I think this is wrong
+	[a,b] = @g;
+
+end

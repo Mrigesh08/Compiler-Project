@@ -1,0 +1,23 @@
+_main[]
+  int a , c;
+  a=5;
+  matrix b;
+  b=[1 , 2, 3; 4,5,6;9,0	];
+
+  function [string s]= _concatenate[string a, string a2]
+  	s = a + a2;
+  end;
+
+
+  read(x);
+  print(a);
+
+  x= (5 / 5)+6;
+
+  y=a[2,3];
+
+  z= _fjdsa(a,b);
+  
+  [a,b,c]=_finca(a,b,c);
+
+end
