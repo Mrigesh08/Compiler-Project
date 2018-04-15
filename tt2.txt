@@ -1,6 +1,7 @@
 _main[]
-
-	if(((c==d).and.(a>=b)).or.(.not.(a>b)))
+	a = a + b*c-d*e;
+	
+	if((((c==d).and.(a>=b)).or.(.not.(a>b))).and.(a=/=b))
 		int a;
 	else
 	    if (6<7)

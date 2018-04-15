@@ -1,0 +1,8 @@
+_main[]
+
+	s= a + b;
+	int a,b,c,d;
+	real f;
+	string y;
+	
+end

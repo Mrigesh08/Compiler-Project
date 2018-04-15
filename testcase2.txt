@@ -3,6 +3,8 @@ _main[]
 	int a;
 	s = "abcd"+[1,2,3; 4,5,6,7];
 	# above should be syntactically correct
+	# some foa
 	a = @s;
+	
 	print(a);
 end
