@@ -153,6 +153,17 @@ void processFunctionDeclaration(TreeNode * tn1, TreeNode * tn2){
 
 }
 
+int lookupInFunList(char * name, TreeNode * tree){
+	TreeNode * temp=tree;
+	while(temp!=NULL){
+		if(strcmp(name,temp->str)==0){
+			return 1;
+		}
+		temp=temp->next;
+	}
+	return 0;
+}
+
 void createSymbolTable(TreeNode * t,  TreeNode * tn){
 	// t is the abstract syntax treenode
 	// tn is the SymbolTableTree node in which we have to insert the symbols. 
@@ -185,20 +196,27 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 			// recursively call createSymbolTable on the newNode
 			char * thing=t2->down->next->token->c;
 			printf("HELLO  %s\n",thing );
-			TreeNode * t3=createNewTreeNode(thing,NULL);
-			if(tempTreeNode==NULL){
-				tn->down=t3;
-				t3->parent=tn;
-				tempTreeNode=t3;
+			if(lookupInFunList(thing,tn->down)==1){
+				printf("ERROR.... Function '%s' redeclared.\n",thing );
 			}
 			else{
-				t3->parent=tn;
-				tempTreeNode->next=t3;
-				tempTreeNode=t3;
+
+
+				TreeNode * t3=createNewTreeNode(thing,NULL);
+				if(tempTreeNode==NULL){
+					tn->down=t3;
+					t3->parent=tn;
+					tempTreeNode=t3;
+				}
+				else{
+					t3->parent=tn;
+					tempTreeNode->next=t3;
+					tempTreeNode=t3;
+				}
+				processFunctionDeclaration(t3,t2);
+				TreeNode * main2=t2->down->next->next->next;
+				createSymbolTable(main2,t3); 
 			}
-			processFunctionDeclaration(t3,t2);
-			TreeNode * main2=t2->down->next->next->next;
-			createSymbolTable(main2,t3); 
 		}
 		t2=t2->next;
 	}

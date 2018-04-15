@@ -1,7 +1,7 @@
 // ID  =2015A7PS0146P
 // Name=Mrigesh Madaan
 
-
+#include <string.h>
 #include "lexer.h"
 #include "trie.h"
 
@@ -83,7 +83,7 @@ Token * generateToken(char * name,char * str, int type){
 	// handle NUM to convert it to a number and RNUM to real number
 	// handle STRING
 	Token * tk=(Token *)malloc(sizeof(Token));
-	tk->tokenName=(char *)malloc(sizeof(name));
+	tk->tokenName=(char *)malloc(strlen(name)+1);
 	strcpy(tk->tokenName,name);
 	tk->lineNumber=lineNumber;
 	if(type!=-1){
@@ -95,7 +95,7 @@ Token * generateToken(char * name,char * str, int type){
 		}
 		else if(type==2){
 			tk->type=2;
-			tk->c=(char *)malloc(sizeof(str)+1);
+			tk->c=(char *)malloc(strlen(str)+1);
 			strcpy(tk->c,str);
 		}
 		else if(type==3){

@@ -20,7 +20,7 @@ TreeNode * ast;
 TreeNode * st;
 
 int atoiPlus(char * str){
-	char * x=(char *)malloc(sizeof(char)*3);
+	char * x=(char *)malloc(strlen(str)-1); // -2+1
 	int i=1;
 	while(str[i]!='>'){
 		x[i-1]=str[i];
@@ -71,7 +71,7 @@ void errorRecovery(Token * tk){
 	}
 }
 
-
+/*
 void strtok2(char * str,SNode * n, int k){	
 	// in i is the starting point
 	int i=0;
@@ -79,7 +79,7 @@ void strtok2(char * str,SNode * n, int k){
 		i++;
 	}
 	// str[i]='\0';
-	char * x=(char *)malloc(sizeof(char)*20);
+	char * x=(char *)malloc(strlen(str)+1);
 	
 	int j=0;
 	while(j<i){
@@ -121,12 +121,12 @@ void strtok2(char * str,SNode * n, int k){
 	}
 	
 }
-
+/*
 TreeNode * insertIntoTreeAndReversePush(char * str, TreeNode * tn){
 	// printf("reversing and inserting\n");
 	Stack * s=createStack();
 	// printf("1. LOLOL \n");
-	char * str2=(char *)malloc(sizeof(str));
+	char * str2=(char *)malloc(strlen(str)+1);
 	strcpy(str2,str);
 	// printf("Length of string %ld\n",strlen(str2) );
 	// printf("Copied string %s\n",str2 );
@@ -203,17 +203,18 @@ TreeNode * insertIntoTreeAndReversePush(char * str, TreeNode * tn){
 	return tn->down;
 
 }
-/*
+*/
+
 TreeNode * insertIntoTreeAndReversePush(char * str, TreeNode * tn){
-	printf("reversing and inserting\n");
+	// printf("reversing and inserting\n");
 	Stack * s=createStack();
 	// printf("1. LOLOL \n");
-	char * str2=(char *)malloc(sizeof(str)+1);
+	char * str2=(char *)malloc(strlen(str)+1);
 	strcpy(str2,str);
-	printf("Copied string %s\n",str2 );
+	// printf("Copied string %s\n",str2 );
 	char * tk=strtok(str2," ");
 	// printf("2. LOLOL \n");
-	char * x=(char *)malloc(sizeof(tk)+1);
+	char * x=(char *)malloc(strlen(tk)+1);
 	strcpy(x,tk);
 	
 	push(s,x);
@@ -228,8 +229,8 @@ TreeNode * insertIntoTreeAndReversePush(char * str, TreeNode * tn){
 	tk=strtok(NULL," ");
 
 	while(tk!=NULL){
-		printf("Reversing Token =%s\n",tk );
-		x=(char *)malloc(sizeof(tk)+1);
+		// printf("Reversing Token =%s\n",tk );
+		x=(char *)malloc(strlen(tk)+1);
 		strcpy(x,tk);
 		
 		push(s,x);
@@ -247,17 +248,17 @@ TreeNode * insertIntoTreeAndReversePush(char * str, TreeNode * tn){
 	while(node!=NULL){
 		if((node->str)[0]!='$'){
 			push(stack,node->str);
-			printf("pushed node into actual stack %s\n",node->str );
+			// printf("pushed node into actual stack %s\n",node->str );
 			
 		}
 		node=pop(s);
 		
 	}
-	printf("returnning\n");
+	// printf("returnning\n");
 	return tn->down;
 
 }
-*/
+
 
 TreeNode * fillStackTillTerminal(int ruleNumber, int tIndex, char * str, TreeNode * tn, Token * tk){
 	// stack has been popped in the calling function

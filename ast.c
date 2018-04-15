@@ -7,7 +7,7 @@
 #include "ntree.h"
 
 int atoiPlus2(char * str){
-	char * x=(char *)malloc(sizeof(char)*3);
+	char * x=(char *)malloc(strlen(str)-1);
 	int i=1;
 	while(str[i]!='>'){
 		x[i-1]=str[i];

@@ -530,7 +530,7 @@ void computePredictiveParsingTable(Head * g){
 			while(no!=NULL){
 				// printf("%s\t", no->str);
 				int index=getIndexOfTerminal(no->str);
-				ppt[i][index]=(char *)malloc(sizeof(char)*60);
+				ppt[i][index]=(char *)malloc(strlen(n->str)+1);
 				strcpy(ppt[i][index],n->str);
 				no=no->next;
 			}
