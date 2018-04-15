@@ -42,7 +42,7 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 			break;
 
 		case 2: 
-			tn = createNewTreeNode("MAIN2",NULL);
+			tn = createNewTreeNode("MAIN",NULL);
 			tn->down=list;
 			return tn;
 			break;

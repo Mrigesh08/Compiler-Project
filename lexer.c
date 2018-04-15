@@ -237,6 +237,7 @@ Token * getNextToken(){
 						break;
 					}
 				}
+				lineNumber++;
 				lexemeStart=forward;
 				state=0;
 				break;

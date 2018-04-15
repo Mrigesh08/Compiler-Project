@@ -7,6 +7,8 @@
 #include "ntree.h"
 #include "ast.h"
 #include "symbolTable.h"
+#include "typeChecker.h"
+
 // #include "ast.h" // this file includes lexer.h, ntree.h
 
 
@@ -623,11 +625,23 @@ int main(int argc, char const *argv[])
 		}
 		else if(k==6){
 			printf("CREATING SYMBOL TABLE\n");
-			st=createNewTreeNode("ROOT",NULL);
+			st=createNewTreeNode("MAIN",NULL);
 			createSymbolTable(ast,st);
 			printf("---------------------------------------------------------------------------\n");
 			printSymbolTable(st);
 			printf("CREATING SYMBOL TABLE COMPLETED\n");
+		}
+		else if(k==7){
+			printf("TPYE CHECKING STARTED\n");
+			TreeNode * temp=ast->down;
+			while(temp!=NULL){
+				if(strcmp(temp->str,"VARASSIGN")==0){
+					printf("Type checkig result line number %d = %d\n",temp->down->token->lineNumber,typeChecker(temp->down->next,st,"MAIN") );
+				}
+				// ========================================== MORE RULES SHOULD FOLLOW
+				temp=temp->next;
+			}
+			printf("TPYE CHECKING ENDED\n");
 		}
 		else{
 			printf("%d is not a valid option. Please Choose a valid option.\n", k);

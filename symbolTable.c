@@ -163,6 +163,49 @@ int lookupInFunList(char * name, TreeNode * tree){
 	}
 	return 0;
 }
+TreeNode * lookupFunctionName(TreeNode * t, char * name){
+	if(strcmp(t->str,name)==0){
+		return t;
+	}
+	else{
+		TreeNode * temp=t->down;
+		while(temp!=NULL){
+			return lookupFunctionName(temp,name);
+			temp=temp->next;
+		}
+		return NULL;
+
+	}
+}
+int findSymbolType(TreeNode * t,char *x){
+	// t is the symbolTable node in which this symbol was operated upon.
+	// x is the name of symbol
+	Entry * temp=t->nextEntry;
+	while(temp!=NULL){
+		if(strcmp(temp->name,x)==0){
+			return temp->type;
+		}
+		temp=temp->nextEntry;
+	}
+	if(t->parent==NULL){
+		return -1;
+	}
+	else{
+		return findSymbolType(t->parent,x);
+	}
+
+}
+
+int getTypeFromSymbolTable(char * id, TreeNode * st, char * scopingFunction){
+	TreeNode * temp=lookupFunctionName(st,scopingFunction);
+	if(temp==NULL){
+		printf("TYPECHECKER ERROR : couldn't find a function names %s\n",scopingFunction );
+		return -1;
+	}
+	else{
+		return findSymbolType(temp,id);
+	}
+}
 
 void createSymbolTable(TreeNode * t,  TreeNode * tn){
 	// t is the abstract syntax treenode
