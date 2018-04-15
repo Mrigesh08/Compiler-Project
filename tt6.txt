@@ -1,8 +1,35 @@
 _main[]
+	# For type Checking
+	string s1,s2,s3;
+	s1="fdsaf";
+	s2="fdafda";
 
-	s= a + b;
 	int a,b,c,d;
-	real f;
-	string y;
-	
+	a=4;
+	b=5;
+	c=6;
+
+	real q,w,e;
+	q=9.13;
+	w=8.54;
+	e=3.45;
+
+	matrix m1,m2,m3;
+	m1=[1,2,3 ; 4,5,6];
+	m2=[1,2 ; 6,7];
+
+	d=a+b; # no error
+	d=a+6 * 5 -b; # no error
+	d=a/q;  # error should be raised
+	d=m1 + q; # error should be raised
+
+	m3=m1 + m2;
+	m3=m1 - m2;
+	m3=m1 * m2;
+	m3 = m1 / m2;
+
+	e=q+w;
+	e=q-w;
+	e=q*w;
+	e=q/w;
 end
