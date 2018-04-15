@@ -5,24 +5,26 @@
 #include <string.h>
 #include "lexer.h"
 
+typedef struct _e{
+	char * name;
+	int type;
+	int offset;
+	int size;
+	int width;
+	struct _e * nextEntry;
+}Entry;
 
 typedef struct _tn{
-	char * str;
+	char * str; // this will be function name in case of symbol table
 	struct _token * token;
+	struct _e * nextEntry;
 	struct _tn * next;
 	struct _tn * down;
 	struct _tn * parent;
 }TreeNode;
 
+TreeNode * createNewTreeNode(char * str,Token * tk);
 
-TreeNode * createNewTreeNode(char * str,Token * tk){
-	TreeNode * n=(TreeNode *)malloc(sizeof(TreeNode));
-	// n->str=( char *)malloc(sizeof(str)+1);
-	// strcpy(n->str,str);
-	n->str=str;
-	n->token=tk;
-	n->next=NULL;
-	n->down=NULL;
-	n->parent=NULL;
-	return n;
-}
+/*
+
+*/

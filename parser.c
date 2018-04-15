@@ -4,7 +4,10 @@
 #include <setjmp.h>
 #include "grammarRead.h"
 #include "stack.h"
-#include "ast.h" // this file includes lexer.h, ntree.h
+#include "ntree.h"
+#include "ast.h"
+#include "symbolTable.h"
+// #include "ast.h" // this file includes lexer.h, ntree.h
 
 
 Stack * stack;
@@ -13,6 +16,8 @@ TreeNode * parseTree=NULL;
 int error_flag2=0;
 jmp_buf place;
 FILE * f;
+TreeNode * ast;
+TreeNode * st;
 
 int atoiPlus(char * str){
 	char * x=(char *)malloc(sizeof(char)*3);
@@ -121,7 +126,7 @@ TreeNode * insertIntoTreeAndReversePush(char * str, TreeNode * tn){
 	// printf("reversing and inserting\n");
 	Stack * s=createStack();
 	// printf("1. LOLOL \n");
-	char * str2=(char *)malloc(sizeof(str)+1);
+	char * str2=(char *)malloc(sizeof(str));
 	strcpy(str2,str);
 	// printf("Length of string %ld\n",strlen(str2) );
 	// printf("Copied string %s\n",str2 );
@@ -610,10 +615,18 @@ int main(int argc, char const *argv[])
 		}
 		else if(k==5){
 			printf("CREATING AST\n");
-			TreeNode * ast=createAst(parseTree);
+			ast=createAst(parseTree);
 			printf("PRINTING AST........................\n");
 			printSimpleParseTree(ast);
 			printf("CREATING AST COMPLETED\n");
+		}
+		else if(k==6){
+			printf("CREATING SYMBOL TABLE\n");
+			st=createNewTreeNode("ROOT",NULL);
+			createSymbolTable(ast,st);
+			printf("---------------------------------------------------------------------------\n");
+			printSymbolTable(st);
+			printf("CREATING SYMBOL TABLE COMPLETED\n");
 		}
 		else{
 			printf("%d is not a valid option. Please Choose a valid option.\n", k);
