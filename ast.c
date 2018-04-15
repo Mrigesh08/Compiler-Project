@@ -277,13 +277,24 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 			}
 			break;
 		
-		case 19: 
+		case 19:
 			if(list->next==NULL){
 				return list;
 			}
-			tn=createNewTreeNode("AEXP",NULL);
-			tn->down = list;
-			return tn;
+			else{
+				tn=createNewTreeNode(list->next->str,NULL);
+				tn->down=list;
+				tn2=list->next;
+				list->next=tn2->next;
+				free(tn2);
+				return tn;
+			} 
+			// if(list->next==NULL){
+			// 	return list;
+			// }
+			// tn=createNewTreeNode("AEXP",NULL);
+			// tn->down = list;
+			// return tn;
 			break;
 
 		case 20: 
@@ -295,9 +306,20 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 			}
 			break;
 		case 21: 
-			tn= createNewTreeNode("AEXP",NULL);
-			tn->down=list;
-			return tn;
+			if(list->next==NULL){
+				return list;
+			}
+			else{
+				tn=createNewTreeNode(list->next->str,NULL);
+				tn->down=list;
+				tn2=list->next;
+				list->next=tn2->next;
+				free(tn2);
+				return tn;
+			}
+			// tn= createNewTreeNode("AEXP",NULL);
+			// tn->down=list;
+			// return tn;
 			break;
 		
 		case 22: 
@@ -331,39 +353,39 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 			break;
 		
 		case 26: 
-			tn=createNewTreeNode("VAR",NULL);
+			// tn=createNewTreeNode("VAR",NULL);
 			if(strcmp(t->down->str,"ID")==0){
 				// create matrixElemet
 				if(list->next==NULL){
 					// there is no matrix elem
-					tn->down=list;
-					return tn;
+					// tn->down=list;
+					return list;
 				}
 				tn2=createNewTreeNode("MATRIXELEM",NULL);
 				tn2->down=list;
-				tn->down=tn2;
-				return tn;
+				// tn->down=tn2;
+				return tn2;
 			}
 			else if(strcmp(t->down->str,"SQO")==0){
 				// create matrix // str="MATRIX"
-				tn->down=list;
-				return tn;
+				// tn->down=list;
+				return list;
 			}
 			else if(strcmp(t->down->str,"FUNID")==0){
 				// create funCall stmt // str="FUNCALL"
-				tn->down=list;
-				return tn;
+				// tn->down=list;
+				return list;
 			}
 			else if(strcmp(t->down->str,"SIZE")==0){
 				tn2=createNewTreeNode("SIZE",NULL);
 				tn2->down=list->next;
 				free(list);
-				tn->down=tn2;
-				return tn;
+				// tn->down=tn2;
+				return tn2;
 			}
 			else{
-				tn->down=list;
-				return tn;
+				// tn->down=list;
+				return list;
 			}
 			break;
 		
