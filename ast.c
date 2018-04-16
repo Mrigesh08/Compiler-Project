@@ -13,7 +13,7 @@ int atoiPlus2(char * str){
 		x[i-1]=str[i];
 		i++;
 	}
-	x[i]='\0';
+	x[i-1]='\0';
 	return atoi(x);
 }
 

@@ -223,10 +223,28 @@ void semanticsChecker(TreeNode * ast, TreeNode * symbolTableNode){
 	while(temp!=NULL){
 		if(strcmp(temp->str,"VARASSIGN")==0){
 			int k=validateArithmeticExpression(temp->down->next,symbolTableNode);
-			printf("Type checkig result line number %d = %d\n",temp->down->token->lineNumber,1 );
+			if(k==-1){
+				printf("opration upon incompatible types at lineNumber %d\n",temp->down->token->lineNumber);
+			}
+			else{
+				if(checkType(temp->down,symbolTableNode)!=k){
+					printf("Assigning incompatible types at lineNumber %d\n",temp->down->token->lineNumber );
+				}
+			}
+			printf("Type checkig result line number %d = %d\n",temp->down->token->lineNumber,k );
 		}
 		else if(strcmp(temp->str,"IFSTMT")==0){
 			printf("Boolean expression checking result %d\n", checkBooleanExpression(temp->down,symbolTableNode));
+			TreeNode * stmts=temp->down->next;
+			semanticsChecker(stmts,symbolTableNode);
+			if(stmts->next!=NULL){
+				semanticsChecker(stmts->next,symbolTableNode);
+			}
+		}
+		else if(strcmp(temp->str,"FDEF")==0){
+			TreeNode * newNode=temp->symbolTableNode;
+			TreeNode * stmts=temp->down->next->next->next;
+			semanticsChecker(stmts,newNode);
 		}
 		// ========================================== MORE RULES SHOULD FOLLOW
 		temp=temp->next;

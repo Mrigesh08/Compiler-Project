@@ -22,12 +22,15 @@ Node * newTrieNode(){
 void insertIntoTrie(char * str,Node * n){
 	int x=(int)(str[0]-'a');
 	if(str[0]=='\0'){
+		// printf("WRITING1\n");
 		n->arr[alphabetSize-1]=newTrieNode();
 	}
 	else if(n->arr[x]!=NULL){
+		// printf("WRITING2\n");
 		insertIntoTrie(str+1,n->arr[x]);
 	}
 	else if(n->arr[x]==NULL){
+		// printf("WRITING3\n");
 		n->arr[x]=newTrieNode();
 		insertIntoTrie(str+1,n->arr[x]);
 	}
@@ -55,7 +58,7 @@ void populateTrie(Node * n){
 	char str3[]="real";
 	char str4[]="string";
 	char str5[]="matrix";
-	char str6[]="_main";
+	char str6[]="main";
 	char str7[]="if";
 	char str8[]="else";
 	char str9[]="endif";

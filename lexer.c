@@ -64,7 +64,7 @@ char * createString(char * str, int start, int end){
 		c[i-start]=str[i];
 		i++;
 	}
-	c[i]='\0';
+	c[i-start]='\0';
 	return c;
 }
 
