@@ -71,7 +71,7 @@ Entry * processVariableDeclaration(TreeNode * t, Entry * aie){
 				e2=e;	
 			}
 			else{
-				printf("ERROR1.... Redeclaration of variable %s\n",x);
+				printf("TYPECHECKER ERROR: Redeclaration of variable %s\n",x);
 			}
 			
 		}
@@ -83,7 +83,7 @@ Entry * processVariableDeclaration(TreeNode * t, Entry * aie){
 				printf("SYMBOL TABLE : added variable %s \n",x );
 			}
 			else{
-				printf("ERROR2.... Redeclaration of variable %s\n",x );				
+				printf("TYPECHECKER ERROR: Redeclaration of variable %s\n",x );				
 			}
 			
 		}
@@ -142,7 +142,7 @@ void processFunctionDeclaration(TreeNode * tn1, TreeNode * tn2){
 	TreeNode * plist2=tn2->down->next->next;
 	Entry * e2=generateEntryFromPlist(plist2,e);
 
-	printf("E1 and E2 generated\n");
+	// printf("E1 and E2 generated\n");
 	// Entry * temp=e;
 	// while(temp->nextEntry!=NULL){
 	// 	printf(" Traverserd %s",temp->name);
@@ -355,6 +355,20 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 
 			if(elsePart!=NULL){
 				createSymbolTable(elsePart,tn);
+			}
+		}
+		else if(strcmp(t2->str,"READ")==0){
+			TreeNode * temp=t2->down;
+			int k=checkType(temp,tn);
+			if(k==3 || k==4){
+				printf("TYPECHECKER ERROR: Cannot read matrix or string at lineNumber %d\n",temp->token->lineNumber );
+			}
+		}
+		else if(strcmp(t2->str,"FUNASSIGN")==0){
+			TreeNode * temp = t2->down->next; // this node has the function call
+			if(strcmp(tn->str,temp->down->token->c)==0){
+				// recursive call check
+				printf("TYPECHECKER ERROR: recursive calls are not allowed. Recursive call found at line number %d\n",temp->down->token->lineNumber );
 			}
 		}
 		t2=t2->next;
