@@ -1,3 +1,8 @@
+typedef struct _m{
+	int rows;
+	int columns;
+}Msize;
+
 struct _tn;
 int checkType(struct _tn * t,struct _tn * symbolTable);
 

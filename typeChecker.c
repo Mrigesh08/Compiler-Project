@@ -101,13 +101,84 @@ void printTree(TreeNode * tree){
 		}
 	}
 }
-int getMatrixSize(){
-	
+
+Msize * getMatrixSize(TreeNode * tn,int lineNumber){
+	// tn points to ast node of type MATRIX
+	// printf("INSIDE GET MATRIX size\n");
+	// printf("%s\n",tn->str );
+	int rows=0;
+	int columns=0,c=0;
+	TreeNode * temp1=tn->down;
+	TreeNode * temp2;
+	while(temp1!=NULL){
+		// printf("%s\n",temp1->str );
+		rows++;
+		c=0;
+		temp2=temp1->down;
+		while(temp2!=NULL){
+			c++;
+			// printf("%d ",temp2->token->i );
+			temp2=temp2->next;	
+		}
+		// printf("\n");
+		if(columns==0){
+			columns=c;
+		}
+		else if(columns!=c){
+			printf("TPYECHECKER ERROR : Malformed matrix at lineNumber %d\n",lineNumber);
+			return NULL;
+		}
+		temp1=temp1->next;
+	}
+	Msize * m1=(Msize *)malloc(sizeof(Msize));
+	m1->rows=rows;
+	m1->columns=columns;
+	// printf("SIZE %d,%d\n",m1->rows,m1->columns);
+	return m1;
+}
+
+Msize * ensureMatrixSize(TreeNode * t, TreeNode * st, int line){
+	// t the arithmetic expression involving matrices
+	// st is the scoping symbol table function
+	if(strcmp(t->str,"PLUS")==0 || strcmp(t->str,"MINUS")==0){
+		// printf("INSIDE PLUS MINUS\n");
+		Msize * m1=ensureMatrixSize(t->down,st,line);
+		Msize * m2=ensureMatrixSize(t->down->next,st,line);
+		// printf("HELLO1\n");
+		if(m1==NULL || m2==NULL){
+			// printf("HELLO2\n");
+			return NULL;
+		}
+		else if((m1->rows)==(m2->rows) && (m1->columns) == (m2->columns)){
+			// printf("HELLO3\n");
+			return m1;
+		}
+		else{
+			printf("TYPECHECKER ERROR : matrix sizes do not match at line number %d\n",line );
+			return NULL;
+		}
+	}
+	else{
+		if(strcmp(t->str,"MATRIX")==0){
+			Msize * m=getMatrixSize(t,t->down->down->token->lineNumber);
+			return m;
+		}
+		else{
+			TreeNode * tn=getAstNodeFromSymbolTable(t->token->c,st);
+			// tn points to astNode of type VARASSIGN;
+			if(tn!=NULL){
+				return getMatrixSize(tn->down->next,tn->down->token->lineNumber);
+			}
+			else{
+				return NULL;
+			}
+		}
+		
+	}
 }
 int validateArithmeticExpression(TreeNode * t, TreeNode * symbolTableNode){
 	// t is a RHS of VARASSGN
-	// st is the symbol table
-	// symbolTable is the name of the scoping function in which the varible is present
+	// symbolTable is the treenode of the scoping function in which the varible is present
 	// call recursively for statements defined inside a function.
 	// printTree(t);
 	int k1,k2;
@@ -124,6 +195,7 @@ int validateArithmeticExpression(TreeNode * t, TreeNode * symbolTableNode){
 			return 3;
 		}
 		else if(k1==4 && k2==4){
+			// ensureMatrixSize(t);
 			return 4;
 		}
 		else{
@@ -141,6 +213,7 @@ int validateArithmeticExpression(TreeNode * t, TreeNode * symbolTableNode){
 			return 2;
 		}
 		else if(k1==4 && k2==4){
+			// ensureMatrixSize(t);
 			return 4;
 		}
 		else{
@@ -224,11 +297,15 @@ void semanticsChecker(TreeNode * ast, TreeNode * symbolTableNode){
 		if(strcmp(temp->str,"VARASSIGN")==0){
 			int k=validateArithmeticExpression(temp->down->next,symbolTableNode);
 			if(k==-1){
-				printf("opration upon incompatible types at lineNumber %d\n",temp->down->token->lineNumber);
+				printf("TYPECECKER ERROR : operation upon incompatible types at lineNumber %d\n",temp->down->token->lineNumber);
 			}
 			else{
-				if(checkType(temp->down,symbolTableNode)!=k){
-					printf("Assigning incompatible types at lineNumber %d\n",temp->down->token->lineNumber );
+				int a=checkType(temp->down,symbolTableNode);
+				if(a!=k){
+					printf("TYPECHECKER ERROR : Assigning incompatible types at lineNumber %d\n",temp->down->token->lineNumber );
+				}
+				else if(k==4){
+					ensureMatrixSize(temp->down->next,symbolTableNode,temp->down->token->lineNumber);
 				}
 			}
 			printf("Type checkig result line number %d = %d\n",temp->down->token->lineNumber,k );

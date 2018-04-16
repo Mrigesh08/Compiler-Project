@@ -213,6 +213,40 @@ int getTypeFromSymbolTable(char * id, TreeNode * st){
 	}
 }
 
+Entry * getEntryFromSymbolTable(char * id, TreeNode * st){
+	Entry * temp=st->nextEntry;	 
+	while(temp!=NULL){
+		if(strcmp(id,temp->name)==0){
+			return temp;
+		}
+		temp=temp->nextEntry;
+	}
+	if(st->parent==NULL){
+		printf("TYPECHECKER ERROR : Cannot assign a value to an undeclared variable %s\n",id );
+		return NULL;
+	}
+	else{
+		return getEntryFromSymbolTable(id,st->parent);
+	}
+}
+
+TreeNode * getAstNodeFromSymbolTable(char * id, TreeNode * st){
+	// printf("Looking for node %s\n",id );
+	Entry * temp=st->nextEntry;
+	while(temp!=NULL){
+		if(strcmp(id,temp->name)==0){
+			return temp->astNode;
+		}
+		temp=temp->nextEntry;
+	}
+	if(st->parent==NULL){
+		printf("TYPECHECKER ERROR : couldn't find a symbol with name %s\n",id );
+		return NULL;
+	}
+	else{
+		return getAstNodeFromSymbolTable(id,st->parent);
+	}
+}
 void createSymbolTable(TreeNode * t,  TreeNode * tn){
 	// t is the abstract syntax treenode
 	// tn is the SymbolTableTree node in which we have to insert the symbols. 
@@ -244,6 +278,13 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 				}
 			}
 			
+		}
+		else if(strcmp(t2->str,"VARASSIGN")==0){
+			// get the symbol table entry where the LHS of this has the symbol
+			// map the assignment stmt to the astnode entry of the entry of that symbol table
+			char * x=t2->down->token->c;
+			Entry * e=getEntryFromSymbolTable(x,tn);
+			e->astNode=t2;
 		}
 		else if(strcmp(t2->str,"FDEF")==0){
 			// create a new node. 

@@ -22,7 +22,7 @@ TreeNode * ast;
 TreeNode * st;
 
 int atoiPlus(char * str){
-	printf("VALUE RECEIVED BY AOITPLUS %s and size is %d\n", str,strlen(str));
+	// printf("VALUE RECEIVED BY AOITPLUS %s and size is %d\n", str,strlen(str));
 	char * x=(char *)malloc(strlen(str)-1); // -2+1
 	int i=1;
 	while(str[i]!='>'){
