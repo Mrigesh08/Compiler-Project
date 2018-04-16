@@ -636,7 +636,10 @@ int main(int argc, char const *argv[])
 			TreeNode * temp=ast->down;
 			while(temp!=NULL){
 				if(strcmp(temp->str,"VARASSIGN")==0){
-					printf("Type checkig result line number %d = %d\n",temp->down->token->lineNumber,typeChecker(temp->down->next,st,"MAIN") );
+					printf("Type checkig result line number %d = %d\n",temp->down->token->lineNumber,validateArithmeticExpression(temp->down->next,st,"MAIN") );
+				}
+				else if(strcmp(temp->str,"IFSTMT")==0){
+					printf("Boolean expression checking result %d\n", checkBooleanExpression(temp->down,st,"MAIN"));
 				}
 				// ========================================== MORE RULES SHOULD FOLLOW
 				temp=temp->next;
