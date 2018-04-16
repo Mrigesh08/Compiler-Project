@@ -1,7 +1,10 @@
 _main[]
-	a = a + b*c-d*e;
-	
-	if((((c==d).and.(a>=b)).or.(.not.(a>b))).and.(a=/=b))
+	# testcase for BOOLEAN EXPRESSIONS
+	int a,b,c;
+
+	a = a+ b*c/f*u/r - f;	# this will be converted to left associative when ast is created
+
+	if((((c==d).and.(a>=b)).or.(.not.(a>b))).and.(a=/=6))
 		int a;
 	else
 	    if (6<7)
@@ -11,7 +14,7 @@ _main[]
 	    a=5;
 	endif;
 
-	# the following is allowed according to grammar. I think this is wrong
+	# the following is allowed according to grammar. I think this is wrong.
 	[a,b] = @g;
 
 end

@@ -282,13 +282,16 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 				return list;
 			}
 			else{
-				tn=createNewTreeNode(list->next->str,NULL);
-				tn->down=list;
+				tn1=list;
 				tn2=list->next;
-				list->next=tn2->next;
-				free(tn2);
+				tn=tn2;
+				while(tn2->down->down!=NULL && (strcmp(tn2->down->str,"PLUS")==0 || strcmp(tn2->down->str,"MINUS")==0)){
+					tn2=tn2->down;
+				}
+				tn1->next=tn2->down;
+				tn2->down=tn1;
 				return tn;
-			} 
+			}
 			// if(list->next==NULL){
 			// 	return list;
 			// }
@@ -302,7 +305,28 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 				return NULL;
 			}
 			else{
-				return list;
+				if(list->next->next==NULL){
+					tn=createNewTreeNode(list->str,NULL);
+					tn->down=list->next;
+					tn2=list;
+					free(tn2);
+					return tn;
+				}
+				else{
+					tn1=list;
+					tn2=list->next;
+					tn3=list->next->next;
+					tn=tn3;
+					while(tn3->down->down!=NULL && (strcmp(tn3->down->str,"PLUS")==0 || strcmp(tn3->down->str,"MINUS")==0)){
+						tn3=tn3->down;
+					}
+					// traverse till tn->down == NULL
+					tn1->down=tn2;
+					tn2->next=NULL;
+					tn1->next=tn3->down;
+					tn3->down=tn1;
+					return tn;
+				}
 			}
 			break;
 		case 21: 
@@ -310,12 +334,18 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 				return list;
 			}
 			else{
-				tn=createNewTreeNode(list->next->str,NULL);
-				tn->down=list;
+				// else{
+				tn1=list;
 				tn2=list->next;
-				list->next=tn2->next;
-				free(tn2);
+				tn=tn2;
+				while(tn2->down->down!=NULL){
+					// printf("WENT DOWN @\n");
+					tn2=tn2->down;
+				}
+				tn1->next=tn2->down;
+				tn2->down=tn1;
 				return tn;
+				// }
 			}
 			// tn= createNewTreeNode("AEXP",NULL);
 			// tn->down=list;
@@ -327,7 +357,31 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 				return NULL;
 			}
 			else{
-				return list;
+				if(list->next->next==NULL){
+					// printf("-----------------------------------\n");
+					tn=createNewTreeNode(list->str,NULL);
+					tn->down=list->next;
+					tn2=list;
+					free(tn2);
+					return tn;
+				}
+				else{
+					// printf("=================================\n");
+					tn1=list;
+					tn2=list->next;
+					tn3=list->next->next;
+					tn=tn3;
+					while(tn3->down->down!=NULL){
+						// printf("went down\n");
+						tn3=tn3->down;
+					}
+					// traverse till tn->down == NULL
+					tn1->down=tn2;
+					tn2->next=NULL;
+					tn1->next=tn3->down;
+					tn3->down=tn1;
+					return tn;
+				}
 			}
 			break;
 		
@@ -389,25 +443,29 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 			}
 			break;
 		
-		case 27: 
+		case 27: //OP <27> CL <29> OP <27> CL | NOT OP <27> CL | <40> <30> <40>
 			if(strcmp(t->down->str,"OP")==0){
-				tn=createNewTreeNode("BOOL",NULL);
+				
 				tn2=list;
 				list=list->next;
-				free(tn2);
+				free(tn2); // freeing OP
+
 				tn2=list->next;
 				list->next=list->next->next;
-				free(tn2);
+				free(tn2); // freeing CL
+
+				tn=createNewTreeNode(list->next->str,NULL);
+
 				tn2=list->next->next;
-				list->next->next=list->next->next->next;
-				free(tn2);
-				free(list->next->next->next);
-				list->next->next->next=NULL;
+				list->next=list->next->next->next;
+				free(tn2); // freeing OP
+				free(list->next->next); // freeing CL
+				list->next->next=NULL;
 				tn->down=list;
 				return tn;
 			}
 			else if(strcmp(t->down->str,"NOT")==0){
-				tn=createNewTreeNode("BOOLNOT",NULL);
+				tn=createNewTreeNode("NOT",NULL);
 				tn->down=list->next->next;
 				free(list->next->next->next);
 				list->next->next->next=NULL;
@@ -416,7 +474,10 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 				return tn;
 			}
 			else{
-				tn=createNewTreeNode("BOOL",NULL);
+				tn=createNewTreeNode(list->next->str,NULL);
+				tn2=list->next;
+				list->next=list->next->next;
+				free(tn2); // freeing relational op
 				tn->down=list;
 				return tn;
 			}
@@ -568,9 +629,9 @@ TreeNode * combine(TreeNode * t, TreeNode * list){
 			break;
 		
 		case 40: 
-			tn=createNewTreeNode("VAR",NULL);
-			tn->down=list;
-			return tn;
+			// tn=createNewTreeNode("VAR",NULL);
+			// tn->down=list;
+			return list;
 			break;
 		
 		case 41:
