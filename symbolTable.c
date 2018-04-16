@@ -70,7 +70,7 @@ Entry * processVariableDeclaration(TreeNode * t, Entry * aie){
 				e2=e;	
 			}
 			else{
-				printf("ERROR.... Redeclaration of variable %s\n",x);
+				printf("ERROR1.... Redeclaration of variable %s\n",x);
 			}
 			
 		}
@@ -82,14 +82,14 @@ Entry * processVariableDeclaration(TreeNode * t, Entry * aie){
 				printf("SYMBOL TABLE : added variable %s \n",x );
 			}
 			else{
-				printf("ERROR.... Redeclaration of variable %s\n",x );				
+				printf("ERROR2.... Redeclaration of variable %s\n",x );				
 			}
 			
 		}
 		
 		list=list->next;
 	}
-	return e; // NULL will never be returned at the very first declaration
+	return e;
 }
 
 Entry * generateEntryFromPlist(TreeNode * list1, Entry * list2){
@@ -123,7 +123,7 @@ Entry * generateEntryFromPlist(TreeNode * list1, Entry * list2){
 			}
 		}
 		else{
-			printf("ERROR.... Redeclaration of variable %s\n",name );							
+			printf("ERROR2.... Redeclaration of variable %s\n",name );							
 		}
 		plist=plist->next->next;
 	}
@@ -196,14 +196,20 @@ int findSymbolType(TreeNode * t,char *x){
 
 }
 
-int getTypeFromSymbolTable(char * id, TreeNode * st, char * scopingFunction){
-	TreeNode * temp=lookupFunctionName(st,scopingFunction);
-	if(temp==NULL){
-		printf("TYPECHECKER ERROR : couldn't find a function names %s\n",scopingFunction );
+int getTypeFromSymbolTable(char * id, TreeNode * st){
+	Entry * temp=st->nextEntry;
+	while(temp!=NULL){
+		if(strcmp(id,temp->name)==0){
+			return temp->type;
+		}
+		temp=temp->nextEntry;
+	}
+	if(st->parent==NULL){
+		printf("TYPECHECKER ERROR : couldn't find a symbol with name %s\n",id );
 		return -1;
 	}
 	else{
-		return findSymbolType(temp,id);
+		return getTypeFromSymbolTable(id,st->parent);
 	}
 }
 
@@ -216,29 +222,35 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 	// you are looking for DECL nodes and FDEF nodes
 	while(t2!=NULL){
 		if(strcmp(t2->str,"DECL")==0){
+			 // map the symbol table node for all the decl stmts
 			// add it to the current node
 			Entry * e=processVariableDeclaration(t2,tn->nextEntry);
-			if(tn->nextEntry==NULL){
-				tn->nextEntry=e;
-			}
-			else{
-				// traverse till the end and attach
-				if(e!=NULL){
-					Entry * temp=e;
-					while(temp->nextEntry!=NULL){
-						temp=temp->nextEntry;
-					}
-					temp->nextEntry=tn->nextEntry;
+			if(e!=NULL){
+				t2->symbolTableNode=tn;
+				e->astNode=t2;
+				if(tn->nextEntry==NULL){
 					tn->nextEntry=e;
 				}
+				else{
+					// traverse till the end and attach
+					if(e!=NULL){
+						Entry * temp=e;
+						while(temp->nextEntry!=NULL){
+							temp=temp->nextEntry;
+						}
+						temp->nextEntry=tn->nextEntry;
+						tn->nextEntry=e;
+					}
+				}
 			}
+			
 		}
 		else if(strcmp(t2->str,"FDEF")==0){
 			// create a new node. 
 			// set parent. 
 			// recursively call createSymbolTable on the newNode
 			char * thing=t2->down->next->token->c;
-			printf("HELLO  %s\n",thing );
+			// printf("HELLO  %s\n",thing );
 			if(lookupInFunList(thing,tn->down)==1){
 				printf("ERROR.... Function '%s' redeclared.\n",thing );
 			}
@@ -246,6 +258,7 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 
 
 				TreeNode * t3=createNewTreeNode(thing,NULL);
+				t2->symbolTableNode=t3;
 				if(tempTreeNode==NULL){
 					tn->down=t3;
 					t3->parent=tn;
@@ -259,6 +272,15 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 				processFunctionDeclaration(t3,t2);
 				TreeNode * main2=t2->down->next->next->next;
 				createSymbolTable(main2,t3); 
+			}
+		}
+		else if(strcmp(t2->str,"IFSTMT")==0){
+			TreeNode * stmts=t2->down->next;
+			createSymbolTable(stmts,tn);
+			TreeNode * elsePart=t2->down->next->next;
+
+			if(elsePart!=NULL){
+				createSymbolTable(elsePart,tn);
 			}
 		}
 		t2=t2->next;

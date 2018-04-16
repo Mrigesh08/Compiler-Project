@@ -12,12 +12,14 @@ typedef struct _e{
 	int size;
 	int width;
 	struct _e * nextEntry;
+	struct _tn * astNode;
 }Entry;
 
 typedef struct _tn{
 	char * str; // this will be function name in case of symbol table
 	struct _token * token;
 	struct _e * nextEntry;
+	struct _tn * symbolTableNode;
 	struct _tn * next;
 	struct _tn * down;
 	struct _tn * parent;

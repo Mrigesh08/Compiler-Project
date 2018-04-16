@@ -7,6 +7,7 @@ TreeNode * createNewTreeNode(char * str,Token * tk){
 	n->str=str;
 	n->token=tk;
 	n->nextEntry=NULL;
+	n->symbolTableNode=NULL;
 	n->next=NULL;
 	n->down=NULL;
 	n->parent=NULL;
