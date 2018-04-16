@@ -1,11 +1,13 @@
 _main[]
 	# testcase for BOOLEAN EXPRESSIONS
-	int a,b,c;
-
+	int a,b,c,d;
+	real d; # redeclaration error here
+	matrix m;
 	a = a+ b*c/f*u/r - f;	# this will be converted to left associative when ast is created
 
-	if((((c==d).and.(a>=b)).or.(.not.(a>b))).and.(a=/=6))
-		int a;
+	if((((a==d).and.(a>=b)).or.(.not.(a>b))).and.(a=/=6))
+		matrix e;
+		x=2+m;
 	else
 	    if (6<7)
 			  int a;
