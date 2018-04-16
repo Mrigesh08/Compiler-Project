@@ -14,8 +14,6 @@
 
 int checkType(TreeNode * t,TreeNode * symbolTable){
 	// t is treenode of type "var"
-	// st is the symbol table
-	// symbolTable is name of function in which this assigment statement written
 	// symbolTable is the node in which this arithmetic expression was found.
 	if(strcmp(t->str,"MATRIXELEM")==0){
 		return 1;
@@ -58,7 +56,7 @@ int checkType(TreeNode * t,TreeNode * symbolTable){
 			return 1;
 		}
 		else if(k==-1){
-			printf("TYPECHECKER : ERROR... Variable undeclared %s at line number %d\n",name,t->down->token->lineNumber );
+			printf("TYPECHECKER : ERROR...  Undeclared variable used %s at line number %d\n",name,t->down->token->lineNumber );
 			return -1;
 		}
 		else{
@@ -69,7 +67,7 @@ int checkType(TreeNode * t,TreeNode * symbolTable){
 		// printf("TYPECHECKER : checking for %s\n",t->token->c );
 		int k=getTypeFromSymbolTable(t->token->c,symbolTable);
 		if(k==-1){
-			printf("TYPECHECKER : ERROR1... Variable undeclared %s at line number %d\n",t->token->c,t->token->lineNumber );			
+			printf("TYPECHECKER : ERROR... Undeclared variable used %s at line number %d\n",t->token->c,t->token->lineNumber );			
 			return -1;
 		}
 		// printf("return value %d\n",k );
@@ -294,23 +292,24 @@ void semanticsChecker(TreeNode * ast, TreeNode * symbolTableNode){
 	// ast is the abstract syntax tree rooted at ast
 	TreeNode * temp=ast->down;
 	while(temp!=NULL){
-		if(strcmp(temp->str,"VARASSIGN")==0){
-			int k=validateArithmeticExpression(temp->down->next,symbolTableNode);
-			if(k==-1){
-				printf("TYPECECKER ERROR : operation upon incompatible types at lineNumber %d\n",temp->down->token->lineNumber);
-			}
-			else{
-				int a=checkType(temp->down,symbolTableNode);
-				if(a!=k){
-					printf("TYPECHECKER ERROR : Assigning incompatible types at lineNumber %d\n",temp->down->token->lineNumber );
-				}
-				else if(k==4){
-					ensureMatrixSize(temp->down->next,symbolTableNode,temp->down->token->lineNumber);
-				}
-			}
-			printf("Type checkig result line number %d = %d\n",temp->down->token->lineNumber,k );
-		}
-		else if(strcmp(temp->str,"IFSTMT")==0){
+		// if(strcmp(temp->str,"VARASSIGN")==0){
+		// 	int k=validateArithmeticExpression(temp->down->next,symbolTableNode);
+		// 	if(k==-1){
+		// 		printf("TYPECECKER ERROR : operation upon incompatible types at lineNumber %d\n",temp->down->token->lineNumber);
+		// 	}
+		// 	else{
+		// 		int a=checkType(temp->down,symbolTableNode);
+		// 		if(a!=k){
+		// 			printf("TYPECHECKER ERROR : Assigning incompatible types at lineNumber %d\n",temp->down->token->lineNumber );
+		// 		}
+		// 		else if(k==4){
+		// 			ensureMatrixSize(temp->down->next,symbolTableNode,temp->down->token->lineNumber);
+		// 		}
+		// 	}
+		// 	printf("Type checkig result line number %d = %d\n",temp->down->token->lineNumber,k );
+		// }
+		// else if(strcmp(temp->str,"IFSTMT")==0){
+		if(strcmp(temp->str,"IFSTMT")==0){
 			printf("Boolean expression checking result %d\n", checkBooleanExpression(temp->down,symbolTableNode));
 			TreeNode * stmts=temp->down->next;
 			semanticsChecker(stmts,symbolTableNode);

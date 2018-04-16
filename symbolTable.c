@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "ntree.h"
+#include "typeChecker.h"
 /*
 #define numberOfVars 50
 typedef struct _e{
@@ -205,7 +206,7 @@ int getTypeFromSymbolTable(char * id, TreeNode * st){
 		temp=temp->nextEntry;
 	}
 	if(st->parent==NULL){
-		printf("TYPECHECKER ERROR : couldn't find a symbol with name %s\n",id );
+		// printf("TYPECHECKER ERROR : couldn't find a symbol with name %s\n",id );
 		return -1;
 	}
 	else{
@@ -247,6 +248,21 @@ TreeNode * getAstNodeFromSymbolTable(char * id, TreeNode * st){
 		return getAstNodeFromSymbolTable(id,st->parent);
 	}
 }
+void checkIfVariableUsedBeforeDeclaration(TreeNode * t, TreeNode * st){
+	if(t->down==NULL){
+		if(strcmp(t->str,"ID")==0){
+
+		}
+	}
+	else{
+		TreeNode * temp=t;
+		while(temp!=NULL){
+			checkIfVariableUsedBeforeDeclaration(temp,st);
+			temp=temp->next;
+		}	
+	}
+	
+}
 void createSymbolTable(TreeNode * t,  TreeNode * tn){
 	// t is the abstract syntax treenode
 	// tn is the SymbolTableTree node in which we have to insert the symbols. 
@@ -284,7 +300,24 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 			// map the assignment stmt to the astnode entry of the entry of that symbol table
 			char * x=t2->down->token->c;
 			Entry * e=getEntryFromSymbolTable(x,tn);
-			e->astNode=t2;
+			if(e!=NULL){
+				e->astNode=t2;
+			}
+			TreeNode * temp=t2;
+			int k=validateArithmeticExpression(temp->down->next,tn);
+			if(k==-1){
+				printf("TYPECECKER ERROR : operation upon incompatible types at lineNumber %d\n",temp->down->token->lineNumber);
+			}
+			else{
+				int a=checkType(temp->down,tn);
+				if(a!=k){
+					printf("TYPECHECKER ERROR : Assigning incompatible types at lineNumber %d\n",temp->down->token->lineNumber );
+				}
+				else if(k==4){
+					ensureMatrixSize(temp->down->next,tn,temp->down->token->lineNumber);
+				}
+			}
+			printf("Type checkig result line number %d = %d\n",temp->down->token->lineNumber,k );
 		}
 		else if(strcmp(t2->str,"FDEF")==0){
 			// create a new node. 
