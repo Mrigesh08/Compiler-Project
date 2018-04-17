@@ -125,7 +125,7 @@ Entry * generateEntryFromPlist(TreeNode * list1, Entry * list2){
 			}
 		}
 		else{
-			printf("ERROR2.... Redeclaration of variable %s\n",name );							
+			printf("TYPECHECKER ERROR: Redeclaration of variable %s\n",name );							
 		}
 		plist=plist->next->next;
 	}
@@ -133,13 +133,14 @@ Entry * generateEntryFromPlist(TreeNode * list1, Entry * list2){
 }
 
 void processFunctionDeclaration(TreeNode * tn1, TreeNode * tn2){
-	// tn1 is the treenode where you will insert new declaration
+	// tn1 is the treenode of symbolTable where you will insert new declaration
 	// tn2 is the definition of function in the ast
 	// tn2-down is the first plist. tn2-down-next-next if the second plist. 
 	// tn2-down-next-next-next-down is the statements that need to be parsed
 	TreeNode * plist1=tn2->down;
 	Entry * e=generateEntryFromPlist(plist1,NULL);
 
+	// check if all the output variables have been assigned a value
 	TreeNode * plist2=tn2->down->next->next;
 	Entry * e2=generateEntryFromPlist(plist2,e);
 
@@ -223,13 +224,14 @@ Entry * getEntryFromSymbolTable(char * id, TreeNode * st){
 		}
 		temp=temp->nextEntry;
 	}
-	if(st->parent==NULL){
-		printf("TYPECHECKER ERROR : Cannot assign a value to an undeclared variable %s\n",id );
-		return NULL;
-	}
-	else{
-		return getEntryFromSymbolTable(id,st->parent);
-	}
+	return NULL;
+	// if(st->parent==NULL){
+	// 	printf("TYPECHECKER ERROR : Cannot assign a value to an undeclared variable %s\n",id );
+	// 	return NULL;
+	// }
+	// else{
+	// 	return getEntryFromSymbolTable(id,st->parent);
+	// }
 }
 
 TreeNode * getAstNodeFromSymbolTable(char * id, TreeNode * st){
@@ -321,7 +323,7 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 			char * thing=t2->down->next->token->c;
 			// printf("HELLO  %s\n",thing );
 			if(lookupInFunList(thing,tn->down)==1){
-				printf("ERROR.... Function '%s' redeclared.\n",thing );
+				printf("TYPECHECKER ERROR.... Function '%s' redeclared at line number %d\n",thing,t2->down->down->token->lineNumber );
 			}
 			else{
 
@@ -342,6 +344,7 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 				processFunctionDeclaration(t3,t2);
 				TreeNode * main2=t2->down->next->next->next;
 				createSymbolTable(main2,t3); 
+				ensureValuesAssigned(t2,t3);
 			}
 		}
 		else if(strcmp(t2->str,"IFSTMT")==0){
@@ -361,23 +364,29 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 			}
 		}
 		else if(strcmp(t2->str,"FUNASSIGN")==0){
-			TreeNode * temp = t2->down->next; // this node has the function call
-			if(strcmp(tn->str,temp->down->token->c)==0){
-				// recursive call check
-				printf("TYPECHECKER ERROR: recursive calls are not allowed. Recursive call found at line number %d\n",temp->down->token->lineNumber );
+			if(strcmp(t2->down->next->str,"FUNCALL")==0){
+				TreeNode * temp = t2->down->next; // this node has the function call
+				if(strcmp(tn->str,temp->down->token->c)==0){
+					// recursive call check
+					printf("TYPECHECKER ERROR: recursive calls are not allowed. Recursive call found at line number %d\n",temp->down->token->lineNumber );
+				}
+				TreeNode * fun=ensureFunctionDeclared(temp->down->token->c,tn);
+				// fun is a symbol table node
+				if(fun==NULL){
+					printf("TYPECHECKER ERROR: Undeclared function used at line number %d\n",temp->down->token->lineNumber );
+				}
+				else{
+					// check if the output parameters are declared and exact number is there and they are of same type. 
+					// check if the input parameter are declared and exact number is there and they are of same type.
+					// printf("FOUND function %s\n",fun->astNode->down->next->token->c);
+					List * l=getInputAndOutputListOfFunction(fun->astNode);
+					ensureCorrectFunctionCall(t2,l,tn);
+				}	
 			}
-			TreeNode * fun=ensureFunctionDeclared(temp->down->token->c,tn);
-			// fun is a symbol table node
-			if(fun==NULL){
-				printf("TYPECHECKER ERROR: Undeclared function used at line number %d\n",temp->down->token->lineNumber );
+			else if(strcmp(t2->down->next->str,"SIZE")==0){
+				checkType(t2->down->next,tn);
 			}
-			else{
-				// check if the output parameters are declared and exact number is there and they are of same type. 
-				// check if the input parameter are declared and exact number is there and they are of same type.
-				printf("FOUND function %s\n",fun->astNode->down->next->token->c);
-				List * l=getInputAndOutputListOfFunction(fun->astNode);
-				ensureCorrectFunctionCall(t2,l,tn);
-			}
+			
 		}
 		t2=t2->next;
 	}

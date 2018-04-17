@@ -12,3 +12,4 @@ int findSymbolType(struct _tn * t,char *x);
 int getTypeFromSymbolTable(char * id, struct _tn * st);
 struct _tn * getAstNodeFromSymbolTable(char * id, struct _tn * st);
 int getType(char * x);
+struct _e * getEntryFromSymbolTable(char * id, struct _tn * st);

@@ -316,6 +316,15 @@ void ensureCorrectFunctionCall(TreeNode * t, List * l,TreeNode * st){
 			if(c!=k){
 				printf("TYPECHECKER ERROR : Incompatible types assigned to output list of function at line number %d\n", temp->token->lineNumber);
 			}
+			else{
+				Entry * e=getEntryFromSymbolTable(temp->token->c,st);
+				if(e!=NULL){
+					e->astNode=t;
+				}
+				else{
+					printf("LOOKING FOR %s entry. Was found null\n", temp->token->c);
+				}
+			}
 		}
 		temp2=temp2->next->next;
 		temp=temp->next;
@@ -352,6 +361,22 @@ void ensureCorrectFunctionCall(TreeNode * t, List * l,TreeNode * st){
 
 
 }
+void ensureValuesAssigned(TreeNode * t, TreeNode *t2){
+	// t is the ast node of type "FDEF"
+	// t2 is the symbolTable node of the calling scope
+	TreeNode * temp=t->down->down; 
+	while(temp!=NULL){
+		char * id=temp->next->token->c;
+		Entry * e=getEntryFromSymbolTable(id,t2);
+		if(e!=NULL){
+			if(e->astNode==NULL){
+				printf("TYPECHECKER ERROR: Value not assigned to variable %s in the function at line number %d\n",id,temp->next->token->lineNumber );
+			}
+		}
+		temp=temp->next->next;
+	}
+}
+
 void semanticsChecker(TreeNode * ast, TreeNode * symbolTableNode){
 	// ast is the abstract syntax tree rooted at ast
 	TreeNode * temp=ast->down;

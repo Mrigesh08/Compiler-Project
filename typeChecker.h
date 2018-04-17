@@ -13,3 +13,4 @@ void semanticsChecker(struct _tn * ast, struct _tn * symbolTableNode);
 Msize * ensureMatrixSize(struct _tn * t, struct _tn * st, int line);
 struct _tn *  ensureFunctionDeclared(char * id, struct _tn * tn);
 void ensureCorrectFunctionCall(struct _tn * t, struct _l * l,struct _tn * st);
+void ensureValuesAssigned(struct _tn * t, struct _tn *t2);
