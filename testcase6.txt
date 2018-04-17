@@ -1,11 +1,27 @@
 _main[]
 	function [string a, string g] = _lolfun[string a, string g]
     a = a;
-    g = @m;
-    function [int a, int g] = _lolfun[string a, string g]
+    g = @m; # ERROR undeclared variable
+    function [int a, int g] = _lolfunn[string a, string g]
+      matrix m; # this is visible in this as well as the next function
       a = a;
       g = @m;
-      function [string a, string g] = _lolfun[string a, string g]
+      function [string a, string g] = _lolfunnnn[string a, string g]
+        a = a;
+        g = @m;
+      end;
+    end;
+  end;
+
+  matrix m; # this was undeclared till now.
+  function [string a, string g] = _fun[string a, string g]
+    a = a;
+    g = @m;
+    function [int a, int g] = _lolfunn[string a, string g]
+      matrix m; 
+      a = a;
+      g = @m;
+      function [string a, string g] = _lolfunnnn[string a, string g]
         a = a;
         g = @m;
       end;
