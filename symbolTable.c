@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "ntree.h"
+#include "symbolTable.h"
 #include "typeChecker.h"
 /*
 #define numberOfVars 50
@@ -248,21 +249,15 @@ TreeNode * getAstNodeFromSymbolTable(char * id, TreeNode * st){
 		return getAstNodeFromSymbolTable(id,st->parent);
 	}
 }
-void checkIfVariableUsedBeforeDeclaration(TreeNode * t, TreeNode * st){
-	if(t->down==NULL){
-		if(strcmp(t->str,"ID")==0){
 
-		}
-	}
-	else{
-		TreeNode * temp=t;
-		while(temp!=NULL){
-			checkIfVariableUsedBeforeDeclaration(temp,st);
-			temp=temp->next;
-		}	
-	}
-	
+List * getInputAndOutputListOfFunction(TreeNode * t){
+	// t is node of type "FDEF"
+	List * l1=(List *)malloc(sizeof(List));
+	l1->outputList=t->down->down;
+	l1->inputList=t->down->next->next->down;
+	return l1;
 }
+
 void createSymbolTable(TreeNode * t,  TreeNode * tn){
 	// t is the abstract syntax treenode
 	// tn is the SymbolTableTree node in which we have to insert the symbols. 
@@ -333,6 +328,7 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 
 				TreeNode * t3=createNewTreeNode(thing,NULL);
 				t2->symbolTableNode=t3;
+				t3->astNode=t2;
 				if(tempTreeNode==NULL){
 					tn->down=t3;
 					t3->parent=tn;
@@ -369,6 +365,18 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 			if(strcmp(tn->str,temp->down->token->c)==0){
 				// recursive call check
 				printf("TYPECHECKER ERROR: recursive calls are not allowed. Recursive call found at line number %d\n",temp->down->token->lineNumber );
+			}
+			TreeNode * fun=ensureFunctionDeclared(temp->down->token->c,tn);
+			// fun is a symbol table node
+			if(fun==NULL){
+				printf("TYPECHECKER ERROR: Undeclared function used at line number %d\n",temp->down->token->lineNumber );
+			}
+			else{
+				// check if the output parameters are declared and exact number is there and they are of same type. 
+				// check if the input parameter are declared and exact number is there and they are of same type.
+				printf("FOUND function %s\n",fun->astNode->down->next->token->c);
+				List * l=getInputAndOutputListOfFunction(fun->astNode);
+				ensureCorrectFunctionCall(t2,l,tn);
 			}
 		}
 		t2=t2->next;

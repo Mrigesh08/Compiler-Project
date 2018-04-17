@@ -288,6 +288,70 @@ int checkBooleanExpression(TreeNode * t, TreeNode * st){
 
 }
 
+TreeNode *  ensureFunctionDeclared(char * id, TreeNode * tn){
+	TreeNode * temp=tn->down;
+	while(temp!=NULL){
+		if(strcmp(id,temp->str)==0){
+			return temp;
+		}
+		temp=temp->next;
+	}
+	if(tn->parent!=NULL){
+		return ensureFunctionDeclared(id,tn->parent);
+	}
+	return NULL;
+}
+
+void ensureCorrectFunctionCall(TreeNode * t, List * l,TreeNode * st){
+	// t is node of type "FUNASSIGN"
+	// l is a structure containing input and output parameter list of the called function
+	
+	// checking output list
+	TreeNode * temp=t->down->down; // list of output variables
+	TreeNode * temp2=l->outputList;
+	while(temp!=NULL && temp2!=NULL){
+		int k=checkType(temp,st);
+		if(k!=-1){
+			int c=getType(temp2->str);
+			if(c!=k){
+				printf("TYPECHECKER ERROR : Incompatible types assigned to output list of function at line number %d\n", temp->token->lineNumber);
+			}
+		}
+		temp2=temp2->next->next;
+		temp=temp->next;
+	}
+
+	if(temp==NULL && temp2!=NULL){
+		printf("TYPECHECKER ERROR: Too few arguments passed to output of function at line number %d\n",t->down->down->token->lineNumber );
+	}
+	else if(temp!=NULL && temp2==NULL){
+		printf("TYPECHECKER ERROR: Too many arguments passed to output of function at line number %d\n",t->down->down->token->lineNumber );
+	}
+
+	// checking input list
+	temp=t->down->next->down->next->down; // list of output variables
+	temp2=l->inputList;
+	while(temp!=NULL && temp2!=NULL){
+		int k=checkType(temp,st);
+		if(k!=-1){
+			int c=getType(temp2->str);
+			if(c!=k){
+				printf("TYPECHECKER ERROR : Incompatible types assigned to input list of function at line number %d\n", temp->token->lineNumber);
+			}
+		}
+		temp2=temp2->next->next;
+		temp=temp->next;
+	}
+
+	if(temp==NULL && temp2!=NULL){
+		printf("TYPECHECKER ERROR: Too few arguments passed to input of function at line number %d\n",t->down->down->token->lineNumber );
+	}
+	else if(temp!=NULL && temp2==NULL){
+		printf("TYPECHECKER ERROR: Too many arguments passed to input of function at line number %d\n",t->down->down->token->lineNumber );
+	}	
+
+
+}
 void semanticsChecker(TreeNode * ast, TreeNode * symbolTableNode){
 	// ast is the abstract syntax tree rooted at ast
 	TreeNode * temp=ast->down;

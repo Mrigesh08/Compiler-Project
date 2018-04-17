@@ -19,7 +19,8 @@ typedef struct _tn{
 	char * str; // this will be function name in case of symbol table
 	struct _token * token;
 	struct _e * nextEntry;
-	struct _tn * symbolTableNode;
+	struct _tn * symbolTableNode; // used by ast to point to symbol table entry
+	struct _tn * astNode; // used by symbol table to point ast node
 	struct _tn * next;
 	struct _tn * down;
 	struct _tn * parent;
