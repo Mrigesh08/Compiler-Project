@@ -7,10 +7,10 @@ _main[]
 
 	if((((a==d).and.(a>=b)).or.(.not.(a>b))).and.(a=/=6))
 		matrix e;
-		x=2+m;
+		x=2+m; # error x is undeclared
 	else
 	    if (6<7)
-			  int a;
+			  int a; # error redeclaration of variable a
 	    endif;
 
 	    a=5;

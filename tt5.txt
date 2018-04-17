@@ -3,9 +3,13 @@ _main[]
 	int a,b,c;
 	real c;
 
-	function [string s,string t]= _concatenate[string a, string a2]
+	function [string s,string t]= _concatenate[string a, string a2] # ERROR value not assigned to variable t
 		s = a + a2;
 		function [string f]= _co[string y]
+			s = a + a2;
+
+		end;
+		function [string f]= _co[string y] # ERROR function redeclaration
 			s = a + a2;
 
 		end;
@@ -15,14 +19,17 @@ _main[]
 			real yeah;
 			matrix x;
 		end;
+
+		[s1,s2]=_concatenate(a,a2); # ERROR recusive call error raised
+		[s]=_concate(a,a2); # ERROR function not yet defined (this dunction is defined later)
 	end;
 
 	function [string s]= _concate[string a, string a2]
 		s = a + a2;
 		real bye;
-		function [string f]= _co[string y]
+		function [string f]= _co[string y]  # Value to 'f' assigned in a function call so no error here
 			s = a + a2;
-
+			[f,s] = _concatenate(a,a2); 
 		end;
 		function [int w]= _cot[string q]
 			s = a + a2;
@@ -31,4 +38,10 @@ _main[]
 
 	end;
 
+	[s]=_concate(a,b); # no error of recursive call should be raised
+	# input list type mismatch error should be raised
+	# variable s undeclared error should be raised
+	[s]=_co(a); # ERROR because the function in not declared in this scope
+	[s]=_concatenate(a); # too few arguments to input of function, too few arguments to ouput of function
+	[s,t,c]=_concatenate(a,b,c); # too many arguments at input and output
 end
