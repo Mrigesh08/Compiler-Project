@@ -27,7 +27,7 @@ typedef struct _tn{
 }TreeNode;
 
 TreeNode * createNewTreeNode(char * str,Token * tk);
-
+Entry * createEntryNode(int type,char * s);
 /*
 
 */

@@ -3,6 +3,8 @@
 #include "ntree.h"
 #include "symbolTable.h"
 #include "typeChecker.h"
+#include "intermediateCode.h"
+#include "quad.h"
 /*
 #define numberOfVars 50
 typedef struct _e{
@@ -313,6 +315,14 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 				else if(k==4){
 					ensureMatrixSize(temp->down->next,tn,temp->down->token->lineNumber);
 				}
+				if(a==k){
+					Quad * q=newQuad(NULL,NULL,NULL,NULL);
+					generateQuads(temp->down->next,tn,q);
+					printQuad(q);
+					// remove the first q after printing.
+					// add the final q by mappping an entry to id of lhs
+				}
+
 			}
 			printf("Type checkig result line number %d = %d\n",temp->down->token->lineNumber,k );
 		}
@@ -349,12 +359,16 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 		}
 		else if(strcmp(t2->str,"IFSTMT")==0){
 			TreeNode * stmts=t2->down->next;
+			Quad * q=newQuad(NULL,NULL,NULL,NULL);
+			generateQuadsForBoolean(t2->down,tn,q);
+			printQuad(q);
 			createSymbolTable(stmts,tn);
 			TreeNode * elsePart=t2->down->next->next;
 
 			if(elsePart!=NULL){
 				createSymbolTable(elsePart,tn);
 			}
+
 		}
 		else if(strcmp(t2->str,"READ")==0){
 			TreeNode * temp=t2->down;

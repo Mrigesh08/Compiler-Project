@@ -1,5 +1,5 @@
 CC=gcc
-deps=lexer.o grammarRead.o ntree.o ast.o symbolTable.o typeChecker.o parser.o
+deps=lexer.o grammarRead.o ntree.o ast.o symbolTable.o typeChecker.o intermediateCode.o parser.o
 
 
 all: programs
