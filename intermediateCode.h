@@ -1,6 +1,10 @@
 struct _tn;
 struct _e;
 struct _q;
+struct _ql;
 struct _e * generateQuads(struct _tn * ae,struct _tn * st,struct _q * ql);
 void printQuad(struct _q * q);
 struct _e * generateQuadsForBoolean(struct _tn * ae,struct _tn * st,struct _q * ql);
+struct _ql * appendToListOfQuads(struct _ql * ql,struct _q * q1);
+void printQuadList(struct _ql * ql);
+void appendToQuads(struct _q * ql, struct _q * q);

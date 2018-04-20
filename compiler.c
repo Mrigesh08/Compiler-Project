@@ -5,13 +5,16 @@
 #include "ast.h"
 #include "symbolTable.h"
 #include "typeChecker.h"
+#include "intermediateCode.h"
+#include "quad.h"
 
 int error_flag2=0; // represents an error found in parsing
 int error_flag3=0; // represents an error found after parsing while creating symbolTable, TypeChecking etc
 TreeNode * parseTree=NULL;
 TreeNode * ast=NULL;
 TreeNode * st=NULL;
-
+// QuadList * listOfQuads=NULL;
+// QuadList * listOfBooleansQuads=NULL;
 void display(){
 	printf("GENERAL INFO:\n");
 	printf("0. Both Lexical Analyzer and Syntax Analyzer developed.\n");
@@ -32,6 +35,9 @@ void display2(){
 	printf("Press 2 to print the tokens generated.\n");
 	printf("Press 3 to start parsing the source code.\n");
 	printf("Press 4 to print the parse tree.\n");
+	printf("Press 5 to create the AST.\n");
+	printf("Press 6 to create the Symbol Table and start Semantic Analyzer.\n");
+
 	printf("\n");
 }	
 
@@ -185,6 +191,9 @@ int main(int argc, char const *argv[])
 				printf("---------------------------------------------------------------------------\n");
 				printSymbolTable(st);
 				printf("CREATING SYMBOL TABLE COMPLETED\n");	
+
+				printQuadList(listOfQuads);
+				printQuadList(listOfBooleanQuads);
 			}
 			
 		}

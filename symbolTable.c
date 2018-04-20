@@ -17,7 +17,8 @@ typedef struct _e{
 }Entry;
 */
 
-
+QuadList * listOfQuads =NULL;
+QuadList * listOfBooleanQuads=NULL;
 int getSize(int type){
 	return (type==1)? 2 : (type==2)?4 :0;   // returning 0 for string and matrix 
 }
@@ -317,8 +318,17 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 				}
 				if(a==k && strcmp(tn->str,"MAIN")==0){
 					Quad * q=newQuad(NULL,NULL,NULL,NULL);
-					generateQuads(temp->down->next,tn,q);
-					printQuad(q);
+					Entry * eff=generateQuads(temp->down->next,tn,q);
+					// printQuad(q);
+					Entry * eff2=getEntryFromSymbolTable(temp->down->token->c,tn);
+					if(eff2==NULL){
+						printf("ENTRY NOT FOUND\n");
+					}
+					char * rt=(char *)malloc(sizeof(char)*9);
+					strcpy(rt,"ASSIGNOP");
+					Quad * q2=newQuad(rt,eff,NULL,eff2);
+					appendToQuads(q,q2);
+					listOfQuads=appendToListOfQuads(listOfQuads,q->next);
 					// remove the first q after printing.
 					// add the final q by mappping an entry to id of lhs
 				}
@@ -362,7 +372,8 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 			if(strcmp(tn->str,"MAIN")==0){
 				Quad * q=newQuad(NULL,NULL,NULL,NULL);
 				generateQuadsForBoolean(t2->down,tn,q);
-				printQuad(q);
+				listOfBooleanQuads=appendToListOfQuads(listOfBooleanQuads,q->next);
+				// printQuad(q);
 			}
 			createSymbolTable(stmts,tn);
 			TreeNode * elsePart=t2->down->next->next;

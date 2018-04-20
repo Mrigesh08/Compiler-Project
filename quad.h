@@ -14,6 +14,9 @@ typedef struct _ql{
 
 }QuadList;
 
+extern QuadList * listOfQuads;
+extern QuadList * listOfBooleanQuads;
+
 Quad * newQuad(char * op,struct _e * arg1, struct _e * arg2, struct _e * arg3);
 
 QuadList * newQuadListElement(Quad * q);

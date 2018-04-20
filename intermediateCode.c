@@ -83,7 +83,8 @@ Entry * generateQuads(TreeNode * ae,TreeNode * st,Quad * ql){
 		e1->astNode=ae;
 		return e1;
 	}
-	else if(strcmp(ae->str,"STRING")==0){
+	else if(strcmp(ae->str,"STR")==0){
+		printf("STR found\n");
 		Entry * e1=createEntryNode(16,generateVariableName()); // type specially decided to be allowing lone matrices having no ID
 		e1->astNode=ae;
 		return e1;
@@ -135,10 +136,43 @@ Entry * generateQuadsForBoolean(TreeNode * be, TreeNode * st, Quad * ql){
 }
 
 void printQuad(Quad * q){
-	q=q->next; // first quad is dummy
+	// q=q->next; // first quad is dummy
 	while(q!=NULL){
 		printf("%s = %s %s %s\n",q->arg3->name, q->arg1->name, q->op,q->arg2 == NULL ? NULL : q->arg2->name );
 		q=q->next;
+	}
+}
+QuadList * appendToListOfQuads(QuadList * ql, Quad * q){
+	// printf("INSIDE APPENDING====================\n");
+	if(ql==NULL){
+	// printf("INSIDE APPENDING 22====================\n");
+		QuadList * newq=(QuadList *)malloc(sizeof(QuadList));
+		newq->first=q;
+		newq->next=NULL;
+		ql=newq;
+		return ql;
+	}
+	else{
+			// printf("INSIDE APPENDING 44 	====================\n");
+
+		QuadList * temp=ql;
+		while(temp->next!=NULL){
+			temp=temp->next;
+		}
+		QuadList * newq=(QuadList *)malloc(sizeof(QuadList));
+		newq->first=q;
+		newq->next=NULL;
+		temp->next=newq;
+		return ql;
+	}
+}
+
+void printQuadList(QuadList * ql){
+	QuadList * temp=ql;
+	while(temp!=NULL){
+		printf("PRINTING QUAD ================= \n");
+		printQuad(temp->first);
+		temp=temp->next;
 	}
 }
 
