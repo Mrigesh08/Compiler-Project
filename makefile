@@ -1,11 +1,11 @@
 CC=gcc
-deps=lexer.o grammarRead.o ntree.o ast.o symbolTable.o typeChecker.o intermediateCode.o parser.o
+deps=lexer.o stack.o grammarRead.o ntree.o ast.o symbolTable.o typeChecker.o intermediateCode.o parser.o compiler.o
 
 
 all: programs
 
 programs: $(deps)
-	$(CC) $(deps) -o stage1exe
+	$(CC) $(deps) -o compiler
 
 
 %.o : %.c

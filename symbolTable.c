@@ -315,7 +315,7 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 				else if(k==4){
 					ensureMatrixSize(temp->down->next,tn,temp->down->token->lineNumber);
 				}
-				if(a==k){
+				if(a==k && strcmp(tn->str,"MAIN")==0){
 					Quad * q=newQuad(NULL,NULL,NULL,NULL);
 					generateQuads(temp->down->next,tn,q);
 					printQuad(q);
@@ -359,9 +359,11 @@ void createSymbolTable(TreeNode * t,  TreeNode * tn){
 		}
 		else if(strcmp(t2->str,"IFSTMT")==0){
 			TreeNode * stmts=t2->down->next;
-			Quad * q=newQuad(NULL,NULL,NULL,NULL);
-			generateQuadsForBoolean(t2->down,tn,q);
-			printQuad(q);
+			if(strcmp(tn->str,"MAIN")==0){
+				Quad * q=newQuad(NULL,NULL,NULL,NULL);
+				generateQuadsForBoolean(t2->down,tn,q);
+				printQuad(q);
+			}
 			createSymbolTable(stmts,tn);
 			TreeNode * elsePart=t2->down->next->next;
 
