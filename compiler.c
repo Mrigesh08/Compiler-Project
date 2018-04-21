@@ -7,6 +7,7 @@
 #include "typeChecker.h"
 #include "intermediateCode.h"
 #include "quad.h"
+#include "codeGenerator.h"
 
 int error_flag2=0; // represents an error found in parsing
 int error_flag3=0; // represents an error found after parsing while creating symbolTable, TypeChecking etc
@@ -37,6 +38,7 @@ void display2(){
 	printf("Press 4 to print the parse tree.\n");
 	printf("Press 5 to create the AST.\n");
 	printf("Press 6 to create the Symbol Table and start Semantic Analyzer.\n");
+	printf("Press 7 to generate code.\n");
 
 	printf("\n");
 }	
@@ -197,6 +199,32 @@ int main(int argc, char const *argv[])
 			}
 			
 		}
+		else if(k==7){
+			if(error_flag2==1 || ast==NULL || st==NULL){
+				printf("Cannot generate code because either errors were found or AST has not been created or Symbol Table has not been created.\n");
+			}
+			else{
+				printf("STARTING CODE GENERATION\n");
+				if(argc<3){
+					printf("Please enter the name of the file for code generation.\n");
+				}
+				else{
+					// char * filename=argv[2];
+					fclose(fopen(argv[2], "w"));
+					FILE * fp=fopen(argv[2],"a");
+					writeDataSection(fp);
+					fprintf(fp, "SECTION .bss\n");
+					allocateSpaceForDeclarations(fp,ast,st);
+					fprintf(fp, "\n" );
+					writeStartSection(fp);
+					generateCode(fp,ast,st);
+					writeQuit(fp);
+				}
+				
+				printf("END CODE GENERATION\n");
+
+			}
+		}	
 		else{
 			printf("%d is not a valid option. Please Choose a valid option.\n", k);
 		}
