@@ -61,7 +61,7 @@ fun_iprint:
 	mov ecx, 0
 
 divideLoop:
-	int ecx ; stores the number of characters to print
+	inc ecx ; stores the number of characters to print
 	mov edx, 0
 	mov esi, 10
 	idiv esi
@@ -95,6 +95,15 @@ fun_iPrintLF:
 	call fun_sprint
 	pop eax
 	pop eax
+	ret
+
+; pass the address of input variable to eax
+fun_readString:
+	mov edx, 20 ; strings are of 20 bytes
+	mov ecx, eax
+	mov ebx, 0
+	mov eax, 3
+	int 80h
 	ret
 
 fun_exit:
