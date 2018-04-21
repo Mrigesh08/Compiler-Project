@@ -26,14 +26,15 @@ void writeFileForOp(FILE * f, char * op, char * result){
 	}
 }
 void processQuads(FILE * f,Quad * q,TreeNode * st){
+	// used for integer arithmetic
 	Quad * temp=q;
 	while(temp!=NULL){
 		
 		if(strcmp(temp->op,"ASSIGNOP")==0){
 
-			// printf("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n");
 			Entry * e=temp->arg1;
 			if(e->type==14){
+				// lone matrix
 				char * arg3=temp->arg3->name;
 				fprintf(f, "\tmov ebx,%s\n",arg3 );
 				fprintf(f, "\tmov ax,%d\n",e->astNode->token->i );
@@ -55,11 +56,6 @@ void processQuads(FILE * f,Quad * q,TreeNode * st){
 			if(e1==NULL){
 				printf("HERE 1\n");
 				fprintf(f, "\tpop ax\n");
-				// TreeNode * astNode=temp->arg1->astNode;
-				// if(strcmp(astNode->str,"NUM")==0){
-				// 	fprintf(f, "\tpop eax\n");	
-				// }
-				// more statements to follow - for size, matrix etc
 			}
 			else{
 				printf("HERE 2\n");
@@ -73,11 +69,6 @@ void processQuads(FILE * f,Quad * q,TreeNode * st){
 			if(e2==NULL){
 				printf("HERE 3\n");
 				fprintf(f, "\tpop bx\n");
-				// TreeNode * astNode=temp->arg2->astNode;
-				// if(strcmp(astNode->str,"NUM")==0){
-				// 		fprintf(f, "\tpop ebx\n");
-				// }
-				// more statements to follow - for size, matrix etc
 			}
 			else{
 				printf("HERE 4\n");
@@ -103,6 +94,37 @@ void processQuads(FILE * f,Quad * q,TreeNode * st){
 	}
 }
 
+void processQuads4(FILE * f,Quad * q,TreeNode * st){
+	// used for matrix arithmetic
+	Quad * temp=q;
+	if(temp->next==NULL){
+		if(strcmp(temp->op,"ASSIGNOP")==0){
+			fprintf(f, "\tmov eax, %s\n",temp->arg1->name );
+			fprintf(f, "\tmov ebx, %s\n",temp->arg3->name );
+			fprintf(f, "\tcall fun_matCopy\n\n");
+		}
+	}
+	else
+	while(temp!=NULL){
+		if(strcmp(temp->op,"ASSIGNOP")==0){
+			fprintf(f, "\tmov eax, mat11\n" ); // source
+			fprintf(f, "\tmov ebx, %s\n",temp->arg3->name ); // destination
+			fprintf(f, "\tcall fun_matCopy\n\n");
+		}
+		else{
+			if(getEntryFromSymbolTable(temp->arg1->name,st)==NULL){
+				fprintf(f, "\tmov eax,mat11\n");
+			}
+			else{
+				fprintf(f, "\tmov eax, %s\n",temp->arg1->name );	
+			}
+			fprintf(f, "\tmov ebx, %s\n",temp->arg2->name );
+			fprintf(f, "\tmov ecx, mat11\n");
+			fprintf(f, "\tcall fun_matrixAdd\n\n" );
+		}
+		temp=temp->next;
+	}	
+}
 void generateCode(FILE * f, TreeNode * ast, TreeNode * st){
 	// Remember, first check to see if all the values have been initialized properly
 	TreeNode * temp=ast->down;
@@ -110,13 +132,32 @@ void generateCode(FILE * f, TreeNode * ast, TreeNode * st){
 		if(strcmp(temp->str,"VARASSIGN")==0){
 			Quad * q=listOfQuads->first;
 			listOfQuads=listOfQuads->next;
-			processQuads(f,q,st);
+			int k=getTypeFromSymbolTable(temp->down->token->c,st);
+			if(k==1){
+				processQuads(f,q,st);
+			}
+			else if(k==3){
+
+			}
+			else if(k==4){
+				processQuads4(f,q,st);
+			}
 		}
 		else if(strcmp(temp->str,"READ")==0){
-			fprintf(f, "\tmov eax, msg111\n");
-			fprintf(f, "\tcall fun_printLineFeed\n\n");
-			fprintf(f, "\tmov eax, %s\n",temp->down->token->c );
-			fprintf(f, "\tcall fun_readString\n\n");
+			char * id=temp->down->token->c;
+			int k=getTypeFromSymbolTable(id,st);
+			if(k==3){
+				fprintf(f, "\tmov eax, %s\n",temp->down->token->c );
+				fprintf(f, "\tcall fun_readString\n\n");
+			}
+			else if(k==1){
+				fprintf(f, "\tmov eax, %s\n",temp->down->token->c );
+				fprintf(f, "\tcall fun_readString\n");
+				fprintf(f, "\tmov eax, %s\n",temp->down->token->c );
+				fprintf(f, "\tcall fun_readInteger\n");
+				fprintf(f, "\tmov ebx, %s\n",temp->down->token->c );
+				fprintf(f, "\tmov [ebx], ax\n\n" );
+			}
 
 		}
 		else if(strcmp(temp->str,"PRINT")==0){
@@ -133,6 +174,15 @@ void generateCode(FILE * f, TreeNode * ast, TreeNode * st){
 				// for strings
 				fprintf(f, "\tmov eax,%s\n",id );
 				fprintf(f, "\tcall fun_sprint\n\n");
+
+			}
+			else if(k==4){
+				// for matrices
+				fprintf(f, "\tmov ebx,%s\n",id );
+				fprintf(f, "\tmov cx, [ebx]\n" );
+				fprintf(f, "\tmov dx, [ebx+2]\n");
+				fprintf(f, "\tmov eax, %s+4\n",id );
+				fprintf(f, "\tcall fun_matPrint\n" );
 
 			}
 			
@@ -172,10 +222,56 @@ void allocateSpaceForDeclarations(FILE * f, TreeNode * ast, TreeNode * st){
 	} 
 }
 
-void writeDataSection(FILE * f){
+void writeDataSection(FILE * f,TreeNode * st){
 	fprintf(f, "%cinclude 'functions.asm'\n\nSECTION .data\n",'%' );
-	fprintf(f, "msg111 db 'Waiting For input: ', 0h\n");
+	Entry * temp=st->nextEntry;
+	while(temp!=NULL){
+		if(temp->type==11){
+			fprintf(f, "%s dw ", temp->name );
+			TreeNode * list=temp->astNode->down;
+			TreeNode * list2=list->down;
+			int rows=0;
+			int columns=0;
+			while(list!=NULL){
+				rows++;
+				list=list->next;
+
+			}
+			while(list2!=NULL){
+				columns++;
+				list2=list2->next;	
+			}
+			fprintf(f, "%d, %d, ",rows,columns );
+			list=temp->astNode->down;
+			while(list!=NULL){
+				list2=list->down;
+				while(list2!=NULL){
+					if(list2->next!=NULL){
+						fprintf(f, "%d, ",list2->token->i );
+					}
+					else{
+						fprintf(f, "%d",list2->token->i );
+					}
+					list2=list2->next;	
+				}
+				if(list->next!=NULL){
+					fprintf(f, ",");
+				}
+				else{
+					fprintf(f, ",-1\n" );
+				}
+				list=list->next;
+
+			}
+		}
+		else if(temp->type==16){
+			char * str=temp->astNode->token->c;
+			fprintf(f, "%s db %s,0h\n",temp->name,str );
+		}
+		temp=temp->nextEntry;
+	}
 	fprintf(f, "\n" );
+
 }
 
 void writeStartSection(FILE * f){

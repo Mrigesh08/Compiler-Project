@@ -212,8 +212,9 @@ int main(int argc, char const *argv[])
 					// char * filename=argv[2];
 					fclose(fopen(argv[2], "w"));
 					FILE * fp=fopen(argv[2],"a");
-					writeDataSection(fp);
+					writeDataSection(fp,st);
 					fprintf(fp, "SECTION .bss\n");
+					fprintf(fp, "mat11: RESW 100\n");
 					allocateSpaceForDeclarations(fp,ast,st);
 					fprintf(fp, "\n" );
 					writeStartSection(fp);

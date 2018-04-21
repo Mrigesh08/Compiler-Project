@@ -61,6 +61,8 @@ Entry * generateQuads(TreeNode * ae,TreeNode * st,Quad * ql){
 	else if(strcmp(ae->str,"MATRIX")==0){
 		Entry * e1=createEntryNode(11,generateVariableName()); // type specially decided to be allowing lone matrices having no ID
 		e1->astNode=ae;
+		e1->nextEntry=st->nextEntry;
+		st->nextEntry=e1;
 		return e1;
 	}
 	else if(strcmp(ae->str,"MATRIXELEM")==0){
@@ -87,6 +89,8 @@ Entry * generateQuads(TreeNode * ae,TreeNode * st,Quad * ql){
 		printf("STR found\n");
 		Entry * e1=createEntryNode(16,generateVariableName()); // type specially decided to be allowing lone matrices having no ID
 		e1->astNode=ae;
+		e1->nextEntry=st->nextEntry;
+		st->nextEntry=e1;
 		return e1;
 	}
 }
